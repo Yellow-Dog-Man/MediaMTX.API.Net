@@ -1,0 +1,32 @@
+﻿<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="openapi.yaml" type="SwaggerCodegen" editBeforeRun="true" show_console_on_std_err="false" show_console_on_std_out="false">
+    <option name="allowRunningInParallel" value="false" />
+    <option name="customTemplatesPath" value="" />
+    <option name="generateToPath" value="C:\Workspace\MediaMTX.API.Net" />
+    <option name="generationParameters">
+      <list>
+        <CliArgumentViewModel>
+          <option name="name" value="packageName" />
+          <option name="value" value="MediaMTX.API" />
+        </CliArgumentViewModel>
+        <CliArgumentViewModel>
+          <option name="name" value="library" />
+          <option name="value" value="generichost" />
+        </CliArgumentViewModel>
+        <CliArgumentViewModel>
+          <option name="name" value="targetFramework" />
+          <option name="value" value="netstandard2.0" />
+        </CliArgumentViewModel>
+      </list>
+    </option>
+    <option name="generatorType" value="OPENAPI_GENERATOR_V7" />
+    <option name="jdkPath" value="C:\Program Files\JetBrains\JetBrains Rider 2026.1.1\jbr\bin\java.exe" />
+    <option name="language" value="csharp" />
+    <option name="projectPathOnTarget" />
+    <option name="selectedOptions">
+      <list />
+    </option>
+    <option name="specificationPath" value="C:\Workspace\MediaMTX.API.Net\api\openapi.yaml" />
+    <method v="2" />
+  </configuration>
+</component>

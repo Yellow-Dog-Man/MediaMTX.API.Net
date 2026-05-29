@@ -1,0 +1,4838 @@
+openapi: 3.0.0
+info:
+  description: "API of MediaMTX, a server and proxy that supports various protocols."
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: MediaMTX API
+  version: 1.0.0
+servers:
+- url: http://localhost:9997
+paths:
+  /v3/info:
+    get:
+      operationId: info
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Info'
+          description: the request was successful.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns informations about the instance.
+      tags:
+      - General
+  /v3/auth/jwks/refresh:
+    post:
+      operationId: authJwksRefresh
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OK'
+          description: the request was successful.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: Manually refreshes the JWT JWKS.
+      tags:
+      - Authentication
+  /v3/config/global/get:
+    get:
+      description: ""
+      operationId: configGlobalGet
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlobalConf'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns the global configuration.
+      tags:
+      - Configuration
+  /v3/config/global/patch:
+    patch:
+      description: all fields are optional.
+      operationId: configGlobalSet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GlobalConf'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OK'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: patches the global configuration.
+      tags:
+      - Configuration
+  /v3/config/pathdefaults/get:
+    get:
+      description: ""
+      operationId: configPathDefaultsGet
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PathConf'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns the default path configuration.
+      tags:
+      - Configuration
+  /v3/config/pathdefaults/patch:
+    patch:
+      description: all fields are optional.
+      operationId: configPathDefaultsPatch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PathConf'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OK'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: patches the default path configuration.
+      tags:
+      - Configuration
+  /v3/config/paths/list:
+    get:
+      description: ""
+      operationId: configPathsList
+      parameters:
+      - description: page number.
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      - description: items per page.
+        explode: true
+        in: query
+        name: itemsPerPage
+        required: false
+        schema:
+          default: 100
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PathConfList'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns all path configurations.
+      tags:
+      - Configuration
+  /v3/config/paths/get/{name}:
+    get:
+      description: ""
+      operationId: configPathsGet
+      parameters:
+      - description: the name of the path.
+        explode: false
+        in: path
+        name: name
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PathConf'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: path not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns a path configuration.
+      tags:
+      - Configuration
+  /v3/config/paths/add/{name}:
+    post:
+      description: all fields are optional.
+      operationId: configPathsAdd
+      parameters:
+      - description: the name of the path.
+        explode: false
+        in: path
+        name: name
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PathConf'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OK'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: adds a path configuration.
+      tags:
+      - Configuration
+  /v3/config/paths/patch/{name}:
+    patch:
+      description: all fields are optional.
+      operationId: configPathsPatch
+      parameters:
+      - description: the name of the path.
+        explode: false
+        in: path
+        name: name
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PathConf'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OK'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: path not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: patches a path configuration.
+      tags:
+      - Configuration
+  /v3/config/paths/replace/{name}:
+    post:
+      description: all fields are optional.
+      operationId: configPathsReplace
+      parameters:
+      - description: the name of the path.
+        explode: false
+        in: path
+        name: name
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PathConf'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OK'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: path not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: replaces all values of a path configuration.
+      tags:
+      - Configuration
+  /v3/config/paths/delete/{name}:
+    delete:
+      description: ""
+      operationId: configPathsDelete
+      parameters:
+      - description: the name of the path.
+        explode: false
+        in: path
+        name: name
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OK'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: path not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: removes a path configuration.
+      tags:
+      - Configuration
+  /v3/hlsmuxers/list:
+    get:
+      description: ""
+      operationId: hlsMuxersList
+      parameters:
+      - description: page number.
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      - description: items per page.
+        explode: true
+        in: query
+        name: itemsPerPage
+        required: false
+        schema:
+          default: 100
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HLSMuxerList'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns all HLS muxers.
+      tags:
+      - HLS
+  /v3/hlsmuxers/get/{name}:
+    get:
+      description: ""
+      operationId: hlsMuxersGet
+      parameters:
+      - description: name of the muxer.
+        explode: false
+        in: path
+        name: name
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HLSMuxer'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: muxer not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns a HLS muxer.
+      tags:
+      - HLS
+  /v3/hlssessions/list:
+    get:
+      description: ""
+      operationId: hlssessionsList
+      parameters:
+      - description: page number.
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      - description: items per page.
+        explode: true
+        in: query
+        name: itemsPerPage
+        required: false
+        schema:
+          default: 100
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HLSSessionList'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns all HLS sessions.
+      tags:
+      - HLS
+  /v3/hlssessions/get/{id}:
+    get:
+      description: ""
+      operationId: hlssessionsGet
+      parameters:
+      - description: ID of the session.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HLSSession'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: session not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns a HLS session.
+      tags:
+      - HLS
+  /v3/hlssessions/kick/{id}:
+    post:
+      description: ""
+      operationId: hlssessionsKick
+      parameters:
+      - description: ID of the session.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OK'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: session not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: kicks out a HLS session from the server.
+      tags:
+      - HLS
+  /v3/paths/list:
+    get:
+      description: ""
+      operationId: pathsList
+      parameters:
+      - description: page number.
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      - description: items per page.
+        explode: true
+        in: query
+        name: itemsPerPage
+        required: false
+        schema:
+          default: 100
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PathList'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns all paths.
+      tags:
+      - Paths
+  /v3/paths/get/{name}:
+    get:
+      description: ""
+      operationId: pathsGet
+      parameters:
+      - description: name of the path.
+        explode: false
+        in: path
+        name: name
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Path'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: path not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns a path.
+      tags:
+      - Paths
+  /v3/rtspconns/list:
+    get:
+      description: ""
+      operationId: rtspConnsList
+      parameters:
+      - description: page number.
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      - description: items per page.
+        explode: true
+        in: query
+        name: itemsPerPage
+        required: false
+        schema:
+          default: 100
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RTSPConnList'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns all RTSP connections.
+      tags:
+      - RTSP
+  /v3/rtspconns/get/{id}:
+    get:
+      description: ""
+      operationId: rtspConnsGet
+      parameters:
+      - description: ID of the connection.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RTSPConn'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: connection not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns a RTSP connection.
+      tags:
+      - RTSP
+  /v3/rtspsessions/list:
+    get:
+      description: ""
+      operationId: rtspSessionsList
+      parameters:
+      - description: page number.
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      - description: items per page.
+        explode: true
+        in: query
+        name: itemsPerPage
+        required: false
+        schema:
+          default: 100
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RTSPSessionList'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns all RTSP sessions.
+      tags:
+      - RTSP
+  /v3/rtspsessions/get/{id}:
+    get:
+      description: ""
+      operationId: rtspSessionsGet
+      parameters:
+      - description: ID of the connection.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RTSPSession'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: session not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns a RTSP session.
+      tags:
+      - RTSP
+  /v3/rtspsessions/kick/{id}:
+    post:
+      description: ""
+      operationId: rtspSessionsKick
+      parameters:
+      - description: ID of the session.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OK'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: session not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: kicks out a RTSP session from the server.
+      tags:
+      - RTSP
+  /v3/rtspsconns/list:
+    get:
+      description: ""
+      operationId: rtspsConnsList
+      parameters:
+      - description: page number.
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      - description: items per page.
+        explode: true
+        in: query
+        name: itemsPerPage
+        required: false
+        schema:
+          default: 100
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RTSPConnList'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns all RTSPS connections.
+      tags:
+      - RTSP
+  /v3/rtspsconns/get/{id}:
+    get:
+      description: ""
+      operationId: rtspsConnsGet
+      parameters:
+      - description: ID of the connection.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RTSPConn'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: connection not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns a RTSPS connection.
+      tags:
+      - RTSP
+  /v3/rtspssessions/list:
+    get:
+      description: ""
+      operationId: rtspsSessionsList
+      parameters:
+      - description: page number.
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      - description: items per page.
+        explode: true
+        in: query
+        name: itemsPerPage
+        required: false
+        schema:
+          default: 100
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RTSPSessionList'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns all RTSPS sessions.
+      tags:
+      - RTSP
+  /v3/rtspssessions/get/{id}:
+    get:
+      description: ""
+      operationId: rtspsSessionsGet
+      parameters:
+      - description: ID of the connection.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RTSPSession'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: session not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns a RTSPS session.
+      tags:
+      - RTSP
+  /v3/rtspssessions/kick/{id}:
+    post:
+      description: ""
+      operationId: rtspsSessionsKick
+      parameters:
+      - description: ID of the session.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OK'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: session not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: kicks out a RTSPS session from the server.
+      tags:
+      - RTSP
+  /v3/rtmpconns/list:
+    get:
+      description: ""
+      operationId: rtmpConnsList
+      parameters:
+      - description: page number.
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      - description: items per page.
+        explode: true
+        in: query
+        name: itemsPerPage
+        required: false
+        schema:
+          default: 100
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RTMPConnList'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns all RTMP connections.
+      tags:
+      - RTMP
+  /v3/rtmpconns/get/{id}:
+    get:
+      description: ""
+      operationId: rtmpConnectionsGet
+      parameters:
+      - description: ID of the connection.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RTMPConn'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: connection not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns a RTMP connection.
+      tags:
+      - RTMP
+  /v3/rtmpconns/kick/{id}:
+    post:
+      description: ""
+      operationId: rtmpConnsKick
+      parameters:
+      - description: ID of the connection.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OK'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: connection not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: kicks out a RTMP connection from the server.
+      tags:
+      - RTMP
+  /v3/rtmpsconns/list:
+    get:
+      description: ""
+      operationId: rtmpsConnsList
+      parameters:
+      - description: page number.
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      - description: items per page.
+        explode: true
+        in: query
+        name: itemsPerPage
+        required: false
+        schema:
+          default: 100
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RTMPConnList'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns all RTMPS connections.
+      tags:
+      - RTMP
+  /v3/rtmpsconns/get/{id}:
+    get:
+      description: ""
+      operationId: rtmpsConnectionsGet
+      parameters:
+      - description: ID of the connection.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RTMPConn'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: connection not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns a RTMPS connection.
+      tags:
+      - RTMP
+  /v3/rtmpsconns/kick/{id}:
+    post:
+      description: ""
+      operationId: rtmpsConnsKick
+      parameters:
+      - description: ID of the connection.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OK'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: connection not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: kicks out a RTMPS connection from the server.
+      tags:
+      - RTMP
+  /v3/srtconns/list:
+    get:
+      description: ""
+      operationId: srtConnsList
+      parameters:
+      - description: page number.
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      - description: items per page.
+        explode: true
+        in: query
+        name: itemsPerPage
+        required: false
+        schema:
+          default: 100
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SRTConnList'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns all SRT connections.
+      tags:
+      - SRT
+  /v3/srtconns/get/{id}:
+    get:
+      description: ""
+      operationId: srtConnsGet
+      parameters:
+      - description: ID of the connection.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SRTConn'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: connection not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns a SRT connection.
+      tags:
+      - SRT
+  /v3/srtconns/kick/{id}:
+    post:
+      description: ""
+      operationId: srtConnsKick
+      parameters:
+      - description: ID of the connection.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OK'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: connection not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: kicks out a SRT connection from the server.
+      tags:
+      - SRT
+  /v3/webrtcsessions/list:
+    get:
+      description: ""
+      operationId: webrtcSessionsList
+      parameters:
+      - description: page number.
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      - description: items per page.
+        explode: true
+        in: query
+        name: itemsPerPage
+        required: false
+        schema:
+          default: 100
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebRTCSessionList'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns all WebRTC sessions.
+      tags:
+      - WebRTC
+  /v3/webrtcsessions/get/{id}:
+    get:
+      description: ""
+      operationId: webrtcSessionsGet
+      parameters:
+      - description: ID of the session.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebRTCSession'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: session not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns a WebRTC session.
+      tags:
+      - WebRTC
+  /v3/webrtcsessions/kick/{id}:
+    post:
+      description: ""
+      operationId: webrtcSessionsKick
+      parameters:
+      - description: ID of the session.
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OK'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: session not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: kicks out a WebRTC session from the server.
+      tags:
+      - WebRTC
+  /v3/recordings/list:
+    get:
+      description: ""
+      operationId: recordingsList
+      parameters:
+      - description: page number.
+        explode: true
+        in: query
+        name: page
+        required: false
+        schema:
+          default: 0
+          type: integer
+        style: form
+      - description: items per page.
+        explode: true
+        in: query
+        name: itemsPerPage
+        required: false
+        schema:
+          default: 100
+          type: integer
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordingList'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: "returns all recordings, splitted by path."
+      tags:
+      - Recordings
+  /v3/recordings/get/{name}:
+    get:
+      description: ""
+      operationId: recordingsGet
+      parameters:
+      - description: name of the path.
+        explode: false
+        in: path
+        name: name
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recording'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: path not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: returns recordings of a path.
+      tags:
+      - Recordings
+  /v3/recordings/deletesegment:
+    delete:
+      description: ""
+      operationId: recordingsDeleteSegment
+      parameters:
+      - description: path.
+        explode: true
+        in: query
+        name: recordingPath
+        required: true
+        schema:
+          type: string
+        style: form
+      - description: starting date of the segment.
+        explode: true
+        in: query
+        name: start
+        required: true
+        schema:
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OK'
+          description: the request was successful.
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: invalid request.
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: connection not found.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: server error.
+      summary: deletes a recording segment.
+      tags:
+      - Recordings
+components:
+  schemas:
+    OKStatus:
+      enum:
+      - ok
+      type: string
+    ErrorStatus:
+      enum:
+      - error
+      type: string
+    PathSourceType:
+      enum:
+      - hlsSource
+      - redirect
+      - rpiCameraSource
+      - rtmpConn
+      - rtmpsConn
+      - rtmpSource
+      - rtspSession
+      - rtspSource
+      - rtspsSession
+      - srtConn
+      - srtSource
+      - mpegtsSource
+      - rtpSource
+      - webRTCSession
+      - webRTCSource
+      type: string
+    PathReaderType:
+      enum:
+      - hlsSession
+      - rtmpConn
+      - rtmpsConn
+      - rtspConn
+      - rtspSession
+      - rtspsConn
+      - rtspsSession
+      - srtConn
+      - webRTCSession
+      type: string
+    PathTrackCodec:
+      enum:
+      - AV1
+      - VP9
+      - VP8
+      - H265
+      - H264
+      - MPEG-4 Video
+      - MPEG-1/2 Video
+      - M-JPEG
+      - Opus
+      - Vorbis
+      - MPEG-4 Audio
+      - MPEG-4 Audio LATM
+      - MPEG-1/2 Audio
+      - AC3
+      - Speex
+      - G726
+      - G722
+      - G711
+      - LPCM
+      - MPEG-TS
+      - KLV
+      - Generic
+      type: string
+    AlwaysAvailableTrackCodec:
+      enum:
+      - AV1
+      - VP9
+      - H265
+      - H264
+      - MPEG4Audio
+      - Opus
+      - G711
+      - LPCM
+      type: string
+    AuthAction:
+      enum:
+      - publish
+      - read
+      - playback
+      - api
+      - metrics
+      - pprof
+      type: string
+    AuthMethod:
+      enum:
+      - internal
+      - http
+      - jwt
+      type: string
+    Encryption:
+      enum:
+      - "false"
+      - optional
+      - strict
+      type: string
+    HLSVariant:
+      enum:
+      - mpegts
+      - fmp4
+      - lowLatency
+      type: string
+    LogDestination:
+      enum:
+      - stdout
+      - file
+      - syslog
+      type: string
+    LogLevel:
+      enum:
+      - error
+      - warn
+      - info
+      - debug
+      type: string
+    RecordFormat:
+      enum:
+      - fmp4
+      - mpegts
+      type: string
+    RTSPAuthMethod:
+      enum:
+      - basic
+      - digest
+      type: string
+    RTSPRangeType:
+      enum:
+      - ""
+      - clock
+      - npt
+      - smpte
+      type: string
+    RTSPTransport:
+      enum:
+      - udp
+      - multicast
+      - tcp
+      - automatic
+      type: string
+    RTMPConnState:
+      enum:
+      - idle
+      - read
+      - publish
+      type: string
+    RTSPSessionState:
+      enum:
+      - idle
+      - read
+      - publish
+      type: string
+    SRTConnState:
+      enum:
+      - idle
+      - read
+      - publish
+      type: string
+    WebRTCSessionState:
+      enum:
+      - read
+      - publish
+      type: string
+    OK:
+      example:
+        status: ok
+      properties:
+        status:
+          $ref: '#/components/schemas/OKStatus'
+      type: object
+    Error:
+      example:
+        error: error
+        status: error
+      properties:
+        status:
+          $ref: '#/components/schemas/ErrorStatus'
+        error:
+          type: string
+      type: object
+    Info:
+      example:
+        started: started
+        version: version
+      properties:
+        version:
+          type: string
+        started:
+          type: string
+      type: object
+    AuthInternalUser:
+      example:
+        pass: pass
+        permissions:
+        - path: path
+          action: publish
+        - path: path
+          action: publish
+        user: user
+        ips:
+        - ips
+        - ips
+      properties:
+        user:
+          type: string
+        pass:
+          type: string
+        ips:
+          items:
+            type: string
+          type: array
+        permissions:
+          items:
+            $ref: '#/components/schemas/AuthInternalUserPermission'
+          type: array
+      type: object
+    AuthInternalUserPermission:
+      example:
+        path: path
+        action: publish
+      properties:
+        action:
+          $ref: '#/components/schemas/AuthAction'
+        path:
+          type: string
+      type: object
+    GlobalConf:
+      example:
+        rtspUDPReadBufferSize: 3
+        pprofEncryption: true
+        authInternalUsers:
+        - pass: pass
+          permissions:
+          - path: path
+            action: publish
+          - path: path
+            action: publish
+          user: user
+          ips:
+          - ips
+          - ips
+        - pass: pass
+          permissions:
+          - path: path
+            action: publish
+          - path: path
+            action: publish
+          user: user
+          ips:
+          - ips
+          - ips
+        playbackAllowOrigins:
+        - playbackAllowOrigins
+        - playbackAllowOrigins
+        apiServerKey: apiServerKey
+        playbackEncryption: true
+        apiTrustedProxies:
+        - apiTrustedProxies
+        - apiTrustedProxies
+        authMethods:
+        - basic
+        - basic
+        hlsAllowOrigins:
+        - hlsAllowOrigins
+        - hlsAllowOrigins
+        record: true
+        playback: true
+        api: true
+        metricsServerCert: metricsServerCert
+        hlsSegmentMaxSize: hlsSegmentMaxSize
+        multicastRTPPort: 5
+        rtsp: true
+        webrtcLocalTCPAddress: webrtcLocalTCPAddress
+        rtcpAddress: rtcpAddress
+        udpMaxPayloadSize: 1
+        rtmpServerKey: rtmpServerKey
+        recordDeleteAfter: recordDeleteAfter
+        webrtcAllowOrigin: webrtcAllowOrigin
+        externalAuthenticationURL: externalAuthenticationURL
+        metricsAllowOrigin: metricsAllowOrigin
+        webrtcICETCPMuxAddress: webrtcICETCPMuxAddress
+        metrics: true
+        readBufferCount: 0
+        runOnConnect: runOnConnect
+        writeQueueSize: 6
+        pprofAllowOrigins:
+        - pprofAllowOrigins
+        - pprofAllowOrigins
+        authJWTJWKSFingerprint: authJWTJWKSFingerprint
+        metricsEncryption: true
+        pprofAllowOrigin: pprofAllowOrigin
+        hlsEncryption: true
+        webrtc: true
+        pprofAddress: pprofAddress
+        apiAllowOrigin: apiAllowOrigin
+        multicastIPRange: multicastIPRange
+        runOnConnectRestart: true
+        authHTTPExclude:
+        - path: path
+          action: publish
+        - path: path
+          action: publish
+        hlsDisable: true
+        authHTTPFingerprint: authHTTPFingerprint
+        rtmp: true
+        hlsTrustedProxies:
+        - hlsTrustedProxies
+        - hlsTrustedProxies
+        logLevel: error
+        encryption: encryption
+        webrtcICEUDPMuxAddress: webrtcICEUDPMuxAddress
+        playbackServerKey: playbackServerKey
+        rtmpAddress: rtmpAddress
+        webrtcAdditionalHosts:
+        - webrtcAdditionalHosts
+        - webrtcAdditionalHosts
+        rtspAuthMethods:
+        - null
+        - null
+        rtmpDisable: true
+        hlsMuxerCloseAfter: hlsMuxerCloseAfter
+        hlsAlwaysRemux: true
+        webrtcICEHostNAT1To1IPs:
+        - webrtcICEHostNAT1To1IPs
+        - webrtcICEHostNAT1To1IPs
+        webrtcIPsFromInterfacesList:
+        - webrtcIPsFromInterfacesList
+        - webrtcIPsFromInterfacesList
+        webrtcICEServers:
+        - webrtcICEServers
+        - webrtcICEServers
+        hlsAllowOrigin: hlsAllowOrigin
+        srtAddress: srtAddress
+        rtspServerCert: rtspServerCert
+        readTimeout: readTimeout
+        webrtcServerKey: webrtcServerKey
+        webrtcTrustedProxies:
+        - webrtcTrustedProxies
+        - webrtcTrustedProxies
+        webrtcLocalUDPAddress: webrtcLocalUDPAddress
+        pprofTrustedProxies:
+        - pprofTrustedProxies
+        - pprofTrustedProxies
+        authMethod: internal
+        authJWTClaimKey: authJWTClaimKey
+        rtspsAddress: rtspsAddress
+        webrtcAddress: webrtcAddress
+        rtspTransports:
+        - udp
+        - udp
+        rtmpServerCert: rtmpServerCert
+        hlsSegmentCount: 2
+        playbackAllowOrigin: playbackAllowOrigin
+        hlsDirectory: hlsDirectory
+        apiAddress: apiAddress
+        hlsServerCert: hlsServerCert
+        authJWTJWKS: authJWTJWKS
+        rtmpsAddress: rtmpsAddress
+        pprof: true
+        webrtcIPsFromInterfaces: true
+        protocols:
+        - udp
+        - udp
+        logStructured: true
+        srtpAddress: srtpAddress
+        rtspEncryption: "false"
+        hlsSegmentDuration: hlsSegmentDuration
+        hlsPartDuration: hlsPartDuration
+        hlsVariant: mpegts
+        playbackAddress: playbackAddress
+        authJWTInHTTPQuery: true
+        hlsAddress: hlsAddress
+        rtpAddress: rtpAddress
+        authJWTAudience: authJWTAudience
+        webrtcAllowOrigins:
+        - webrtcAllowOrigins
+        - webrtcAllowOrigins
+        metricsAddress: metricsAddress
+        rtmpEncryption: null
+        logFile: logFile
+        webrtcDisable: true
+        webrtcTrackGatherTimeout: webrtcTrackGatherTimeout
+        authHTTPAddress: authHTTPAddress
+        hlsServerKey: hlsServerKey
+        webrtcHandshakeTimeout: webrtcHandshakeTimeout
+        multicastSRTCPPort: 9
+        pprofServerKey: pprofServerKey
+        playbackServerCert: playbackServerCert
+        srtcpAddress: srtcpAddress
+        webrtcICEServers2:
+        - password: password
+          clientOnly: true
+          url: url
+          username: username
+        - password: password
+          clientOnly: true
+          url: url
+          username: username
+        webrtcEncryption: true
+        logDestinations:
+        - stdout
+        - stdout
+        writeTimeout: writeTimeout
+        pprofServerCert: pprofServerCert
+        recordFormat: recordFormat
+        udpReadBufferSize: 5
+        metricsTrustedProxies:
+        - metricsTrustedProxies
+        - metricsTrustedProxies
+        sysLogPrefix: sysLogPrefix
+        authJWTIssuer: authJWTIssuer
+        recordPath: recordPath
+        apiServerCert: apiServerCert
+        apiAllowOrigins:
+        - apiAllowOrigins
+        - apiAllowOrigins
+        playbackTrustedProxies:
+        - playbackTrustedProxies
+        - playbackTrustedProxies
+        rtspServerKey: rtspServerKey
+        recordPartDuration: recordPartDuration
+        runOnDisconnect: runOnDisconnect
+        metricsServerKey: metricsServerKey
+        rtspAddress: rtspAddress
+        webrtcSTUNGatherTimeout: webrtcSTUNGatherTimeout
+        apiEncryption: true
+        hlsCDNSecret: hlsCDNSecret
+        hls: true
+        authJWTExclude:
+        - path: path
+          action: publish
+        - path: path
+          action: publish
+        recordSegmentDuration: recordSegmentDuration
+        srt: true
+        webrtcServerCert: webrtcServerCert
+        metricsAllowOrigins:
+        - metricsAllowOrigins
+        - metricsAllowOrigins
+        dumpPackets: true
+        multicastRTCPPort: 2
+        rtspDisable: true
+        multicastSRTPPort: 7
+      properties:
+        logLevel:
+          $ref: '#/components/schemas/LogLevel'
+        logDestinations:
+          items:
+            $ref: '#/components/schemas/LogDestination'
+          type: array
+        logStructured:
+          type: boolean
+        logFile:
+          type: string
+        sysLogPrefix:
+          type: string
+        dumpPackets:
+          type: boolean
+        readTimeout:
+          type: string
+        writeTimeout:
+          type: string
+        readBufferCount:
+          deprecated: true
+          format: int64
+          nullable: true
+          type: integer
+        writeQueueSize:
+          format: int64
+          type: integer
+        udpMaxPayloadSize:
+          format: int64
+          type: integer
+        udpReadBufferSize:
+          format: uint64
+          type: integer
+        runOnConnect:
+          type: string
+        runOnConnectRestart:
+          type: boolean
+        runOnDisconnect:
+          type: string
+        authMethod:
+          $ref: '#/components/schemas/AuthMethod'
+        authInternalUsers:
+          items:
+            $ref: '#/components/schemas/AuthInternalUser'
+          type: array
+        authHTTPAddress:
+          type: string
+        externalAuthenticationURL:
+          deprecated: true
+          nullable: true
+          type: string
+        authHTTPFingerprint:
+          type: string
+        authHTTPExclude:
+          items:
+            $ref: '#/components/schemas/AuthInternalUserPermission'
+          type: array
+        authJWTJWKS:
+          type: string
+        authJWTJWKSFingerprint:
+          type: string
+        authJWTClaimKey:
+          type: string
+        authJWTInHTTPQuery:
+          deprecated: true
+          nullable: true
+          type: boolean
+        authJWTIssuer:
+          type: string
+        authJWTAudience:
+          type: string
+        authJWTExclude:
+          items:
+            $ref: '#/components/schemas/AuthInternalUserPermission'
+          type: array
+        api:
+          type: boolean
+        apiAddress:
+          type: string
+        apiEncryption:
+          type: boolean
+        apiServerKey:
+          type: string
+        apiServerCert:
+          type: string
+        apiAllowOrigin:
+          deprecated: true
+          nullable: true
+          type: string
+        apiAllowOrigins:
+          items:
+            type: string
+          type: array
+        apiTrustedProxies:
+          items:
+            type: string
+          type: array
+        metrics:
+          type: boolean
+        metricsAddress:
+          type: string
+        metricsEncryption:
+          type: boolean
+        metricsServerKey:
+          type: string
+        metricsServerCert:
+          type: string
+        metricsAllowOrigin:
+          deprecated: true
+          nullable: true
+          type: string
+        metricsAllowOrigins:
+          items:
+            type: string
+          type: array
+        metricsTrustedProxies:
+          items:
+            type: string
+          type: array
+        pprof:
+          type: boolean
+        pprofAddress:
+          type: string
+        pprofEncryption:
+          type: boolean
+        pprofServerKey:
+          type: string
+        pprofServerCert:
+          type: string
+        pprofAllowOrigin:
+          deprecated: true
+          nullable: true
+          type: string
+        pprofAllowOrigins:
+          items:
+            type: string
+          type: array
+        pprofTrustedProxies:
+          items:
+            type: string
+          type: array
+        playback:
+          type: boolean
+        playbackAddress:
+          type: string
+        playbackEncryption:
+          type: boolean
+        playbackServerKey:
+          type: string
+        playbackServerCert:
+          type: string
+        playbackAllowOrigin:
+          deprecated: true
+          nullable: true
+          type: string
+        playbackAllowOrigins:
+          items:
+            type: string
+          type: array
+        playbackTrustedProxies:
+          items:
+            type: string
+          type: array
+        rtsp:
+          type: boolean
+        rtspDisable:
+          deprecated: true
+          nullable: true
+          type: boolean
+        protocols:
+          deprecated: true
+          items:
+            enum:
+            - udp
+            - multicast
+            - tcp
+            type: string
+          nullable: true
+          type: array
+        rtspTransports:
+          items:
+            enum:
+            - udp
+            - multicast
+            - tcp
+            type: string
+          type: array
+        encryption:
+          allOf:
+          - $ref: '#/components/schemas/Encryption'
+          deprecated: true
+          nullable: true
+          type: string
+        rtspEncryption:
+          $ref: '#/components/schemas/Encryption'
+        rtspAddress:
+          type: string
+        rtspsAddress:
+          type: string
+        rtpAddress:
+          type: string
+        rtcpAddress:
+          type: string
+        multicastIPRange:
+          type: string
+        multicastRTPPort:
+          format: int64
+          type: integer
+        multicastRTCPPort:
+          format: int64
+          type: integer
+        srtpAddress:
+          type: string
+        srtcpAddress:
+          type: string
+        multicastSRTPPort:
+          format: int64
+          type: integer
+        multicastSRTCPPort:
+          format: int64
+          type: integer
+        rtspServerKey:
+          type: string
+        rtspServerCert:
+          type: string
+        authMethods:
+          deprecated: true
+          items:
+            $ref: '#/components/schemas/RTSPAuthMethod'
+          nullable: true
+          type: array
+        rtspAuthMethods:
+          items:
+            $ref: '#/components/schemas/RTSPAuthMethod'
+          type: array
+        rtspUDPReadBufferSize:
+          deprecated: true
+          format: uint64
+          nullable: true
+          type: integer
+        rtmp:
+          type: boolean
+        rtmpDisable:
+          deprecated: true
+          nullable: true
+          type: boolean
+        rtmpEncryption:
+          $ref: '#/components/schemas/Encryption'
+        rtmpAddress:
+          type: string
+        rtmpsAddress:
+          type: string
+        rtmpServerKey:
+          type: string
+        rtmpServerCert:
+          type: string
+        hls:
+          type: boolean
+        hlsDisable:
+          deprecated: true
+          nullable: true
+          type: boolean
+        hlsAddress:
+          type: string
+        hlsEncryption:
+          type: boolean
+        hlsServerKey:
+          type: string
+        hlsServerCert:
+          type: string
+        hlsAllowOrigin:
+          deprecated: true
+          nullable: true
+          type: string
+        hlsAllowOrigins:
+          items:
+            type: string
+          type: array
+        hlsTrustedProxies:
+          items:
+            type: string
+          type: array
+        hlsAlwaysRemux:
+          type: boolean
+        hlsVariant:
+          $ref: '#/components/schemas/HLSVariant'
+        hlsSegmentCount:
+          format: int64
+          type: integer
+        hlsSegmentDuration:
+          type: string
+        hlsPartDuration:
+          type: string
+        hlsSegmentMaxSize:
+          type: string
+        hlsDirectory:
+          type: string
+        hlsMuxerCloseAfter:
+          type: string
+        hlsCDNSecret:
+          type: string
+        webrtc:
+          type: boolean
+        webrtcDisable:
+          deprecated: true
+          nullable: true
+          type: boolean
+        webrtcAddress:
+          type: string
+        webrtcEncryption:
+          type: boolean
+        webrtcServerKey:
+          type: string
+        webrtcServerCert:
+          type: string
+        webrtcAllowOrigin:
+          deprecated: true
+          nullable: true
+          type: string
+        webrtcAllowOrigins:
+          items:
+            type: string
+          type: array
+        webrtcTrustedProxies:
+          items:
+            type: string
+          type: array
+        webrtcLocalUDPAddress:
+          type: string
+        webrtcLocalTCPAddress:
+          type: string
+        webrtcIPsFromInterfaces:
+          type: boolean
+        webrtcIPsFromInterfacesList:
+          items:
+            type: string
+          type: array
+        webrtcAdditionalHosts:
+          items:
+            type: string
+          type: array
+        webrtcICEServers2:
+          items:
+            $ref: '#/components/schemas/WebRTCICEServer'
+          type: array
+        webrtcSTUNGatherTimeout:
+          type: string
+        webrtcHandshakeTimeout:
+          type: string
+        webrtcTrackGatherTimeout:
+          type: string
+        webrtcICEUDPMuxAddress:
+          deprecated: true
+          nullable: true
+          type: string
+        webrtcICETCPMuxAddress:
+          deprecated: true
+          nullable: true
+          type: string
+        webrtcICEHostNAT1To1IPs:
+          deprecated: true
+          items:
+            type: string
+          nullable: true
+          type: array
+        webrtcICEServers:
+          deprecated: true
+          items:
+            type: string
+          nullable: true
+          type: array
+        srt:
+          type: boolean
+        srtAddress:
+          type: string
+        record:
+          deprecated: true
+          nullable: true
+          type: boolean
+        recordPath:
+          deprecated: true
+          nullable: true
+          type: string
+        recordFormat:
+          allOf:
+          - $ref: '#/components/schemas/RecordFormat'
+          deprecated: true
+          nullable: true
+          type: string
+        recordPartDuration:
+          deprecated: true
+          nullable: true
+          type: string
+        recordSegmentDuration:
+          deprecated: true
+          nullable: true
+          type: string
+        recordDeleteAfter:
+          deprecated: true
+          nullable: true
+          type: string
+      type: object
+    PathConf:
+      example:
+        srtReadPassphrase: srtReadPassphrase
+        rtspUDPReadBufferSize: 5
+        sourceFingerprint: sourceFingerprint
+        mpegtsUDPReadBufferSize: 2
+        rpiCameraMode: rpiCameraMode
+        sourceOnDemandStartTimeout: sourceOnDemandStartTimeout
+        rpiCameraWidth: 3
+        sourceProtocol: sourceProtocol
+        useAbsoluteTimestamp: true
+        record: true
+        playback: true
+        rpiCameraSoftwareH264Level: rpiCameraSoftwareH264Level
+        whepSTUNGatherTimeout: whepSTUNGatherTimeout
+        whepHandshakeTimeout: whepHandshakeTimeout
+        rtspTransport: udp
+        rpiCameraMJPEGQuality: 9
+        rpiCameraHFlip: true
+        rpiCameraMetering: rpiCameraMetering
+        publishUser: publishUser
+        rpiCameraIDRPeriod: 9
+        rpiCameraHeight: 2
+        recordDeleteAfter: recordDeleteAfter
+        rpiCameraGain: 7.457744773683766
+        rtspAnyPort: true
+        rpiCameraJPEGQuality: 8
+        rpiCameraDenoise: rpiCameraDenoise
+        rpiCameraSaturation: 1.2315135367772556
+        rpiCameraTuningFile: rpiCameraTuningFile
+        rpiCameraFlickerPeriod: 9
+        rpiCameraLensPosition: 5.025004791520295
+        rtpUDPReadBufferSize: 7
+        rpiCameraHardwareH264Profile: rpiCameraHardwareH264Profile
+        maxReaders: 0
+        rtspRangeStart: rtspRangeStart
+        sourceOnDemand: true
+        recordMaxPartSize: recordMaxPartSize
+        rpiCameraEV: 1.1730742509559433
+        rpiCameraTextOverlay: rpiCameraTextOverlay
+        sourceRedirect: sourceRedirect
+        runOnReadRestart: true
+        rpiCameraBrightness: 4.145608029883936
+        rpiCameraAfMode: rpiCameraAfMode
+        rpiCameraLevel: rpiCameraLevel
+        runOnUnDemand: runOnUnDemand
+        rpiCameraVFlip: true
+        sourceOnDemandCloseAfter: sourceOnDemandCloseAfter
+        runOnInitRestart: true
+        rpiCameraAfWindow: rpiCameraAfWindow
+        rpiCameraFPS: 4.965218492984954
+        runOnRecordSegmentComplete: runOnRecordSegmentComplete
+        rpiCameraAWB: rpiCameraAWB
+        rpiCameraTextOverlayEnable: true
+        rpiCameraCodec: rpiCameraCodec
+        source: source
+        rtspDemuxMpegts: true
+        runOnNotReady: runOnNotReady
+        readPass: readPass
+        runOnUnread: runOnUnread
+        rpiCameraBitrate: 6
+        publishPass: publishPass
+        rpiCameraCamID: 9
+        rpiCameraAWBGains:
+        - 1.4894159098541704
+        - 1.4894159098541704
+        rpiCameraExposure: rpiCameraExposure
+        rpiCameraContrast: 7.386281948385884
+        runOnRecordSegmentCreate: runOnRecordSegmentCreate
+        runOnInit: runOnInit
+        rpiCameraSecondary: true
+        readIPs:
+        - readIPs
+        - readIPs
+        rpiCameraShutter: 6
+        runOnDemand: runOnDemand
+        sourceAnyPortEnable: true
+        name: name
+        alwaysAvailableTracks:
+        - codec: AV1
+          channelCount: 1
+          muLaw: true
+          sampleRate: 6
+        - codec: AV1
+          channelCount: 1
+          muLaw: true
+          sampleRate: 6
+        fallback: fallback
+        rpiCameraHDR: true
+        runOnReadyRestart: true
+        runOnDemandCloseAfter: runOnDemandCloseAfter
+        runOnReady: runOnReady
+        recordFormat: fmp4
+        readUser: readUser
+        alwaysAvailable: true
+        publishIPs:
+        - publishIPs
+        - publishIPs
+        runOnRead: runOnRead
+        rpiCameraAfRange: rpiCameraAfRange
+        rpiCameraSharpness: 1.0246457001441578
+        rpiCameraSoftwareH264Profile: rpiCameraSoftwareH264Profile
+        recordPath: recordPath
+        rpiCameraAfSpeed: rpiCameraAfSpeed
+        rpiCameraHardwareH264Level: rpiCameraHardwareH264Level
+        recordPartDuration: recordPartDuration
+        rtspRangeType: ""
+        rpiCameraROI: rpiCameraROI
+        overridePublisher: true
+        whepTrackGatherTimeout: whepTrackGatherTimeout
+        disablePublisherOverride: true
+        rpiCameraProfile: rpiCameraProfile
+        whepBearerToken: whepBearerToken
+        rtpSDP: rtpSDP
+        recordSegmentDuration: recordSegmentDuration
+        srtPublishPassphrase: srtPublishPassphrase
+        rtspUDPSourcePortRange:
+        - 5
+        - 5
+        runOnDemandRestart: true
+        alwaysAvailableFile: alwaysAvailableFile
+        runOnDemandStartTimeout: runOnDemandStartTimeout
+      properties:
+        name:
+          type: string
+        source:
+          type: string
+        sourceFingerprint:
+          type: string
+        sourceOnDemand:
+          type: boolean
+        sourceOnDemandStartTimeout:
+          type: string
+        sourceOnDemandCloseAfter:
+          type: string
+        maxReaders:
+          format: int64
+          type: integer
+        srtReadPassphrase:
+          type: string
+        fallback:
+          deprecated: true
+          nullable: true
+          type: string
+        useAbsoluteTimestamp:
+          type: boolean
+        alwaysAvailable:
+          type: boolean
+        alwaysAvailableTracks:
+          items:
+            $ref: '#/components/schemas/AlwaysAvailableTrack'
+          type: array
+        alwaysAvailableFile:
+          type: string
+        record:
+          type: boolean
+        playback:
+          deprecated: true
+          nullable: true
+          type: boolean
+        recordPath:
+          type: string
+        recordFormat:
+          $ref: '#/components/schemas/RecordFormat'
+        recordPartDuration:
+          type: string
+        recordMaxPartSize:
+          type: string
+        recordSegmentDuration:
+          type: string
+        recordDeleteAfter:
+          type: string
+        publishUser:
+          deprecated: true
+          nullable: true
+          type: string
+        publishPass:
+          deprecated: true
+          nullable: true
+          type: string
+        publishIPs:
+          deprecated: true
+          items:
+            type: string
+          nullable: true
+          type: array
+        readUser:
+          deprecated: true
+          nullable: true
+          type: string
+        readPass:
+          deprecated: true
+          nullable: true
+          type: string
+        readIPs:
+          deprecated: true
+          items:
+            type: string
+          nullable: true
+          type: array
+        overridePublisher:
+          type: boolean
+        disablePublisherOverride:
+          deprecated: true
+          nullable: true
+          type: boolean
+        srtPublishPassphrase:
+          type: string
+        rtspDemuxMpegts:
+          type: boolean
+        rtspTransport:
+          $ref: '#/components/schemas/RTSPTransport'
+        rtspAnyPort:
+          type: boolean
+        sourceProtocol:
+          allOf:
+          - $ref: '#/components/schemas/RTSPTransport'
+          deprecated: true
+          nullable: true
+          type: string
+        sourceAnyPortEnable:
+          deprecated: true
+          nullable: true
+          type: boolean
+        rtspRangeType:
+          $ref: '#/components/schemas/RTSPRangeType'
+        rtspRangeStart:
+          type: string
+        rtspUDPReadBufferSize:
+          deprecated: true
+          format: uint64
+          nullable: true
+          type: integer
+        rtspUDPSourcePortRange:
+          items:
+            format: uint64
+            type: integer
+          maxItems: 2
+          minItems: 2
+          type: array
+        mpegtsUDPReadBufferSize:
+          deprecated: true
+          format: uint64
+          nullable: true
+          type: integer
+        rtpSDP:
+          type: string
+        rtpUDPReadBufferSize:
+          deprecated: true
+          format: uint64
+          nullable: true
+          type: integer
+        whepBearerToken:
+          type: string
+        whepSTUNGatherTimeout:
+          type: string
+        whepHandshakeTimeout:
+          type: string
+        whepTrackGatherTimeout:
+          type: string
+        sourceRedirect:
+          type: string
+        rpiCameraCamID:
+          format: uint64
+          type: integer
+        rpiCameraSecondary:
+          type: boolean
+        rpiCameraWidth:
+          format: uint64
+          type: integer
+        rpiCameraHeight:
+          format: uint64
+          type: integer
+        rpiCameraHFlip:
+          type: boolean
+        rpiCameraVFlip:
+          type: boolean
+        rpiCameraBrightness:
+          format: double
+          type: number
+        rpiCameraContrast:
+          format: double
+          type: number
+        rpiCameraSaturation:
+          format: double
+          type: number
+        rpiCameraSharpness:
+          format: double
+          type: number
+        rpiCameraExposure:
+          type: string
+        rpiCameraAWB:
+          type: string
+        rpiCameraAWBGains:
+          items:
+            format: double
+            type: number
+          maxItems: 2
+          minItems: 2
+          type: array
+        rpiCameraDenoise:
+          type: string
+        rpiCameraShutter:
+          format: uint64
+          type: integer
+        rpiCameraMetering:
+          type: string
+        rpiCameraGain:
+          format: double
+          type: number
+        rpiCameraEV:
+          format: double
+          type: number
+        rpiCameraROI:
+          type: string
+        rpiCameraHDR:
+          type: boolean
+        rpiCameraTuningFile:
+          type: string
+        rpiCameraMode:
+          type: string
+        rpiCameraFPS:
+          format: double
+          type: number
+        rpiCameraAfMode:
+          type: string
+        rpiCameraAfRange:
+          type: string
+        rpiCameraAfSpeed:
+          type: string
+        rpiCameraLensPosition:
+          format: double
+          type: number
+        rpiCameraAfWindow:
+          type: string
+        rpiCameraFlickerPeriod:
+          format: uint64
+          type: integer
+        rpiCameraTextOverlayEnable:
+          type: boolean
+        rpiCameraTextOverlay:
+          type: string
+        rpiCameraCodec:
+          type: string
+        rpiCameraIDRPeriod:
+          format: uint64
+          type: integer
+        rpiCameraBitrate:
+          format: uint64
+          type: integer
+        rpiCameraProfile:
+          deprecated: true
+          nullable: true
+          type: string
+        rpiCameraLevel:
+          deprecated: true
+          nullable: true
+          type: string
+        rpiCameraHardwareH264Profile:
+          type: string
+        rpiCameraHardwareH264Level:
+          type: string
+        rpiCameraSoftwareH264Profile:
+          type: string
+        rpiCameraSoftwareH264Level:
+          type: string
+        rpiCameraJPEGQuality:
+          deprecated: true
+          format: uint64
+          nullable: true
+          type: integer
+        rpiCameraMJPEGQuality:
+          format: uint64
+          type: integer
+        runOnInit:
+          type: string
+        runOnInitRestart:
+          type: boolean
+        runOnDemand:
+          type: string
+        runOnDemandRestart:
+          type: boolean
+        runOnDemandStartTimeout:
+          type: string
+        runOnDemandCloseAfter:
+          type: string
+        runOnUnDemand:
+          type: string
+        runOnReady:
+          type: string
+        runOnReadyRestart:
+          type: boolean
+        runOnNotReady:
+          type: string
+        runOnRead:
+          type: string
+        runOnReadRestart:
+          type: boolean
+        runOnUnread:
+          type: string
+        runOnRecordSegmentCreate:
+          type: string
+        runOnRecordSegmentComplete:
+          type: string
+      type: object
+    PathConfList:
+      example:
+        pageCount: 0
+        items:
+        - srtReadPassphrase: srtReadPassphrase
+          rtspUDPReadBufferSize: 5
+          sourceFingerprint: sourceFingerprint
+          mpegtsUDPReadBufferSize: 2
+          rpiCameraMode: rpiCameraMode
+          sourceOnDemandStartTimeout: sourceOnDemandStartTimeout
+          rpiCameraWidth: 3
+          sourceProtocol: sourceProtocol
+          useAbsoluteTimestamp: true
+          record: true
+          playback: true
+          rpiCameraSoftwareH264Level: rpiCameraSoftwareH264Level
+          whepSTUNGatherTimeout: whepSTUNGatherTimeout
+          whepHandshakeTimeout: whepHandshakeTimeout
+          rtspTransport: udp
+          rpiCameraMJPEGQuality: 9
+          rpiCameraHFlip: true
+          rpiCameraMetering: rpiCameraMetering
+          publishUser: publishUser
+          rpiCameraIDRPeriod: 9
+          rpiCameraHeight: 2
+          recordDeleteAfter: recordDeleteAfter
+          rpiCameraGain: 7.457744773683766
+          rtspAnyPort: true
+          rpiCameraJPEGQuality: 8
+          rpiCameraDenoise: rpiCameraDenoise
+          rpiCameraSaturation: 1.2315135367772556
+          rpiCameraTuningFile: rpiCameraTuningFile
+          rpiCameraFlickerPeriod: 9
+          rpiCameraLensPosition: 5.025004791520295
+          rtpUDPReadBufferSize: 7
+          rpiCameraHardwareH264Profile: rpiCameraHardwareH264Profile
+          maxReaders: 0
+          rtspRangeStart: rtspRangeStart
+          sourceOnDemand: true
+          recordMaxPartSize: recordMaxPartSize
+          rpiCameraEV: 1.1730742509559433
+          rpiCameraTextOverlay: rpiCameraTextOverlay
+          sourceRedirect: sourceRedirect
+          runOnReadRestart: true
+          rpiCameraBrightness: 4.145608029883936
+          rpiCameraAfMode: rpiCameraAfMode
+          rpiCameraLevel: rpiCameraLevel
+          runOnUnDemand: runOnUnDemand
+          rpiCameraVFlip: true
+          sourceOnDemandCloseAfter: sourceOnDemandCloseAfter
+          runOnInitRestart: true
+          rpiCameraAfWindow: rpiCameraAfWindow
+          rpiCameraFPS: 4.965218492984954
+          runOnRecordSegmentComplete: runOnRecordSegmentComplete
+          rpiCameraAWB: rpiCameraAWB
+          rpiCameraTextOverlayEnable: true
+          rpiCameraCodec: rpiCameraCodec
+          source: source
+          rtspDemuxMpegts: true
+          runOnNotReady: runOnNotReady
+          readPass: readPass
+          runOnUnread: runOnUnread
+          rpiCameraBitrate: 6
+          publishPass: publishPass
+          rpiCameraCamID: 9
+          rpiCameraAWBGains:
+          - 1.4894159098541704
+          - 1.4894159098541704
+          rpiCameraExposure: rpiCameraExposure
+          rpiCameraContrast: 7.386281948385884
+          runOnRecordSegmentCreate: runOnRecordSegmentCreate
+          runOnInit: runOnInit
+          rpiCameraSecondary: true
+          readIPs:
+          - readIPs
+          - readIPs
+          rpiCameraShutter: 6
+          runOnDemand: runOnDemand
+          sourceAnyPortEnable: true
+          name: name
+          alwaysAvailableTracks:
+          - codec: AV1
+            channelCount: 1
+            muLaw: true
+            sampleRate: 6
+          - codec: AV1
+            channelCount: 1
+            muLaw: true
+            sampleRate: 6
+          fallback: fallback
+          rpiCameraHDR: true
+          runOnReadyRestart: true
+          runOnDemandCloseAfter: runOnDemandCloseAfter
+          runOnReady: runOnReady
+          recordFormat: fmp4
+          readUser: readUser
+          alwaysAvailable: true
+          publishIPs:
+          - publishIPs
+          - publishIPs
+          runOnRead: runOnRead
+          rpiCameraAfRange: rpiCameraAfRange
+          rpiCameraSharpness: 1.0246457001441578
+          rpiCameraSoftwareH264Profile: rpiCameraSoftwareH264Profile
+          recordPath: recordPath
+          rpiCameraAfSpeed: rpiCameraAfSpeed
+          rpiCameraHardwareH264Level: rpiCameraHardwareH264Level
+          recordPartDuration: recordPartDuration
+          rtspRangeType: ""
+          rpiCameraROI: rpiCameraROI
+          overridePublisher: true
+          whepTrackGatherTimeout: whepTrackGatherTimeout
+          disablePublisherOverride: true
+          rpiCameraProfile: rpiCameraProfile
+          whepBearerToken: whepBearerToken
+          rtpSDP: rtpSDP
+          recordSegmentDuration: recordSegmentDuration
+          srtPublishPassphrase: srtPublishPassphrase
+          rtspUDPSourcePortRange:
+          - 5
+          - 5
+          runOnDemandRestart: true
+          alwaysAvailableFile: alwaysAvailableFile
+          runOnDemandStartTimeout: runOnDemandStartTimeout
+        - srtReadPassphrase: srtReadPassphrase
+          rtspUDPReadBufferSize: 5
+          sourceFingerprint: sourceFingerprint
+          mpegtsUDPReadBufferSize: 2
+          rpiCameraMode: rpiCameraMode
+          sourceOnDemandStartTimeout: sourceOnDemandStartTimeout
+          rpiCameraWidth: 3
+          sourceProtocol: sourceProtocol
+          useAbsoluteTimestamp: true
+          record: true
+          playback: true
+          rpiCameraSoftwareH264Level: rpiCameraSoftwareH264Level
+          whepSTUNGatherTimeout: whepSTUNGatherTimeout
+          whepHandshakeTimeout: whepHandshakeTimeout
+          rtspTransport: udp
+          rpiCameraMJPEGQuality: 9
+          rpiCameraHFlip: true
+          rpiCameraMetering: rpiCameraMetering
+          publishUser: publishUser
+          rpiCameraIDRPeriod: 9
+          rpiCameraHeight: 2
+          recordDeleteAfter: recordDeleteAfter
+          rpiCameraGain: 7.457744773683766
+          rtspAnyPort: true
+          rpiCameraJPEGQuality: 8
+          rpiCameraDenoise: rpiCameraDenoise
+          rpiCameraSaturation: 1.2315135367772556
+          rpiCameraTuningFile: rpiCameraTuningFile
+          rpiCameraFlickerPeriod: 9
+          rpiCameraLensPosition: 5.025004791520295
+          rtpUDPReadBufferSize: 7
+          rpiCameraHardwareH264Profile: rpiCameraHardwareH264Profile
+          maxReaders: 0
+          rtspRangeStart: rtspRangeStart
+          sourceOnDemand: true
+          recordMaxPartSize: recordMaxPartSize
+          rpiCameraEV: 1.1730742509559433
+          rpiCameraTextOverlay: rpiCameraTextOverlay
+          sourceRedirect: sourceRedirect
+          runOnReadRestart: true
+          rpiCameraBrightness: 4.145608029883936
+          rpiCameraAfMode: rpiCameraAfMode
+          rpiCameraLevel: rpiCameraLevel
+          runOnUnDemand: runOnUnDemand
+          rpiCameraVFlip: true
+          sourceOnDemandCloseAfter: sourceOnDemandCloseAfter
+          runOnInitRestart: true
+          rpiCameraAfWindow: rpiCameraAfWindow
+          rpiCameraFPS: 4.965218492984954
+          runOnRecordSegmentComplete: runOnRecordSegmentComplete
+          rpiCameraAWB: rpiCameraAWB
+          rpiCameraTextOverlayEnable: true
+          rpiCameraCodec: rpiCameraCodec
+          source: source
+          rtspDemuxMpegts: true
+          runOnNotReady: runOnNotReady
+          readPass: readPass
+          runOnUnread: runOnUnread
+          rpiCameraBitrate: 6
+          publishPass: publishPass
+          rpiCameraCamID: 9
+          rpiCameraAWBGains:
+          - 1.4894159098541704
+          - 1.4894159098541704
+          rpiCameraExposure: rpiCameraExposure
+          rpiCameraContrast: 7.386281948385884
+          runOnRecordSegmentCreate: runOnRecordSegmentCreate
+          runOnInit: runOnInit
+          rpiCameraSecondary: true
+          readIPs:
+          - readIPs
+          - readIPs
+          rpiCameraShutter: 6
+          runOnDemand: runOnDemand
+          sourceAnyPortEnable: true
+          name: name
+          alwaysAvailableTracks:
+          - codec: AV1
+            channelCount: 1
+            muLaw: true
+            sampleRate: 6
+          - codec: AV1
+            channelCount: 1
+            muLaw: true
+            sampleRate: 6
+          fallback: fallback
+          rpiCameraHDR: true
+          runOnReadyRestart: true
+          runOnDemandCloseAfter: runOnDemandCloseAfter
+          runOnReady: runOnReady
+          recordFormat: fmp4
+          readUser: readUser
+          alwaysAvailable: true
+          publishIPs:
+          - publishIPs
+          - publishIPs
+          runOnRead: runOnRead
+          rpiCameraAfRange: rpiCameraAfRange
+          rpiCameraSharpness: 1.0246457001441578
+          rpiCameraSoftwareH264Profile: rpiCameraSoftwareH264Profile
+          recordPath: recordPath
+          rpiCameraAfSpeed: rpiCameraAfSpeed
+          rpiCameraHardwareH264Level: rpiCameraHardwareH264Level
+          recordPartDuration: recordPartDuration
+          rtspRangeType: ""
+          rpiCameraROI: rpiCameraROI
+          overridePublisher: true
+          whepTrackGatherTimeout: whepTrackGatherTimeout
+          disablePublisherOverride: true
+          rpiCameraProfile: rpiCameraProfile
+          whepBearerToken: whepBearerToken
+          rtpSDP: rtpSDP
+          recordSegmentDuration: recordSegmentDuration
+          srtPublishPassphrase: srtPublishPassphrase
+          rtspUDPSourcePortRange:
+          - 5
+          - 5
+          runOnDemandRestart: true
+          alwaysAvailableFile: alwaysAvailableFile
+          runOnDemandStartTimeout: runOnDemandStartTimeout
+        itemCount: 6
+      properties:
+        pageCount:
+          format: int64
+          type: integer
+        itemCount:
+          format: int64
+          type: integer
+        items:
+          items:
+            $ref: '#/components/schemas/PathConf'
+          type: array
+      type: object
+    Path:
+      example:
+        available: true
+        inboundFramesInError: 5
+        tracks2:
+        - codecProps: "{}"
+          codec: null
+        - codecProps: "{}"
+          codec: null
+        source: "{}"
+        bytesSent: 7
+        tracks:
+        - AV1
+        - AV1
+        confName: confName
+        readyTime: readyTime
+        availableTime: availableTime
+        bytesReceived: 2
+        inboundBytes: 1
+        readers:
+        - id: id
+          type: hlsSession
+        - id: id
+          type: hlsSession
+        ready: true
+        name: name
+        online: true
+        onlineTime: onlineTime
+        outboundBytes: 5
+      properties:
+        name:
+          type: string
+        confName:
+          type: string
+        source:
+          allOf:
+          - $ref: '#/components/schemas/PathSource'
+          nullable: true
+          type: object
+        ready:
+          deprecated: true
+          type: boolean
+        readyTime:
+          deprecated: true
+          nullable: true
+          type: string
+        available:
+          type: boolean
+        availableTime:
+          nullable: true
+          type: string
+        online:
+          type: boolean
+        onlineTime:
+          nullable: true
+          type: string
+        tracks:
+          deprecated: true
+          items:
+            $ref: '#/components/schemas/PathTrackCodec'
+          type: array
+        tracks2:
+          items:
+            $ref: '#/components/schemas/PathTrack'
+          type: array
+        inboundBytes:
+          format: uint64
+          type: integer
+        outboundBytes:
+          format: uint64
+          type: integer
+        inboundFramesInError:
+          format: uint64
+          type: integer
+        bytesReceived:
+          deprecated: true
+          format: uint64
+          type: integer
+        bytesSent:
+          deprecated: true
+          format: uint64
+          type: integer
+        readers:
+          items:
+            $ref: '#/components/schemas/PathReader'
+          type: array
+      type: object
+    PathList:
+      example:
+        pageCount: 0
+        items:
+        - available: true
+          inboundFramesInError: 5
+          tracks2:
+          - codecProps: "{}"
+            codec: null
+          - codecProps: "{}"
+            codec: null
+          source: "{}"
+          bytesSent: 7
+          tracks:
+          - AV1
+          - AV1
+          confName: confName
+          readyTime: readyTime
+          availableTime: availableTime
+          bytesReceived: 2
+          inboundBytes: 1
+          readers:
+          - id: id
+            type: hlsSession
+          - id: id
+            type: hlsSession
+          ready: true
+          name: name
+          online: true
+          onlineTime: onlineTime
+          outboundBytes: 5
+        - available: true
+          inboundFramesInError: 5
+          tracks2:
+          - codecProps: "{}"
+            codec: null
+          - codecProps: "{}"
+            codec: null
+          source: "{}"
+          bytesSent: 7
+          tracks:
+          - AV1
+          - AV1
+          confName: confName
+          readyTime: readyTime
+          availableTime: availableTime
+          bytesReceived: 2
+          inboundBytes: 1
+          readers:
+          - id: id
+            type: hlsSession
+          - id: id
+            type: hlsSession
+          ready: true
+          name: name
+          online: true
+          onlineTime: onlineTime
+          outboundBytes: 5
+        itemCount: 6
+      properties:
+        pageCount:
+          format: int64
+          type: integer
+        itemCount:
+          format: int64
+          type: integer
+        items:
+          items:
+            $ref: '#/components/schemas/Path'
+          type: array
+      type: object
+    PathSource:
+      properties:
+        type:
+          $ref: '#/components/schemas/PathSourceType'
+        id:
+          type: string
+      type: object
+    PathReader:
+      example:
+        id: id
+        type: hlsSession
+      properties:
+        type:
+          $ref: '#/components/schemas/PathReaderType'
+        id:
+          type: string
+      type: object
+    PathTrack:
+      example:
+        codecProps: "{}"
+        codec: null
+      properties:
+        codec:
+          $ref: '#/components/schemas/PathTrackCodec'
+        codecProps:
+          allOf:
+          - $ref: '#/components/schemas/PathTrackCodecProps'
+          nullable: true
+          type: object
+      type: object
+    PathTrackCodecProps:
+      oneOf:
+      - $ref: '#/components/schemas/PathTrackCodecPropsAV1'
+      - $ref: '#/components/schemas/PathTrackCodecPropsVP9'
+      - $ref: '#/components/schemas/PathTrackCodecPropsH265'
+      - $ref: '#/components/schemas/PathTrackCodecPropsH264'
+      - $ref: '#/components/schemas/PathTrackCodecPropsOpus'
+      - $ref: '#/components/schemas/PathTrackCodecPropsMPEG4Audio'
+      - $ref: '#/components/schemas/PathTrackCodecPropsAC3'
+      - $ref: '#/components/schemas/PathTrackCodecPropsG711'
+      - $ref: '#/components/schemas/PathTrackCodecPropsLPCM'
+    PathTrackCodecPropsAV1:
+      properties:
+        width:
+          format: int64
+          type: integer
+        height:
+          format: int64
+          type: integer
+        profile:
+          format: int64
+          type: integer
+        level:
+          format: int64
+          type: integer
+        tier:
+          format: int64
+          type: integer
+      type: object
+    PathTrackCodecPropsVP9:
+      properties:
+        profile:
+          format: int64
+          type: integer
+      type: object
+    PathTrackCodecPropsH265:
+      properties:
+        width:
+          format: int64
+          type: integer
+        height:
+          format: int64
+          type: integer
+        profile:
+          type: string
+        level:
+          type: string
+      type: object
+    PathTrackCodecPropsH264:
+      properties:
+        width:
+          format: int64
+          type: integer
+        height:
+          format: int64
+          type: integer
+        profile:
+          type: string
+        level:
+          type: string
+      type: object
+    PathTrackCodecPropsOpus:
+      properties:
+        channelCount:
+          format: int64
+          type: integer
+      type: object
+    PathTrackCodecPropsMPEG4Audio:
+      properties:
+        sampleRate:
+          format: int64
+          type: integer
+        channelCount:
+          format: int64
+          type: integer
+      type: object
+    PathTrackCodecPropsAC3:
+      properties:
+        sampleRate:
+          format: int64
+          type: integer
+        channelCount:
+          format: int64
+          type: integer
+      type: object
+    PathTrackCodecPropsG711:
+      properties:
+        muLaw:
+          type: boolean
+        sampleRate:
+          format: int64
+          type: integer
+        channelCount:
+          format: int64
+          type: integer
+      type: object
+    PathTrackCodecPropsLPCM:
+      properties:
+        bitDepth:
+          format: int64
+          type: integer
+        sampleRate:
+          format: int64
+          type: integer
+        channelCount:
+          format: int64
+          type: integer
+      type: object
+    HLSMuxer:
+      example:
+        path: path
+        lastRequest: lastRequest
+        created: created
+        outboundBytes: 1
+        outboundFramesDiscarded: 5
+        bytesSent: 5
+      properties:
+        path:
+          type: string
+        created:
+          type: string
+        lastRequest:
+          type: string
+        outboundBytes:
+          format: uint64
+          type: integer
+        outboundFramesDiscarded:
+          format: uint64
+          type: integer
+        bytesSent:
+          deprecated: true
+          format: uint64
+          type: integer
+      type: object
+    HLSMuxerList:
+      example:
+        pageCount: 0
+        items:
+        - path: path
+          lastRequest: lastRequest
+          created: created
+          outboundBytes: 1
+          outboundFramesDiscarded: 5
+          bytesSent: 5
+        - path: path
+          lastRequest: lastRequest
+          created: created
+          outboundBytes: 1
+          outboundFramesDiscarded: 5
+          bytesSent: 5
+        itemCount: 6
+      properties:
+        pageCount:
+          format: int64
+          type: integer
+        itemCount:
+          format: int64
+          type: integer
+        items:
+          items:
+            $ref: '#/components/schemas/HLSMuxer'
+          type: array
+      type: object
+    HLSSession:
+      example:
+        path: path
+        created: created
+        query: query
+        outboundBytes: 1
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        user: user
+        remoteAddr: remoteAddr
+        isCDN: true
+      properties:
+        id:
+          format: uuid
+          type: string
+        created:
+          type: string
+        remoteAddr:
+          type: string
+        path:
+          type: string
+        query:
+          type: string
+        user:
+          type: string
+        isCDN:
+          type: boolean
+        outboundBytes:
+          format: uint64
+          type: integer
+      type: object
+    HLSSessionList:
+      example:
+        pageCount: 0
+        items:
+        - path: path
+          created: created
+          query: query
+          outboundBytes: 1
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          user: user
+          remoteAddr: remoteAddr
+          isCDN: true
+        - path: path
+          created: created
+          query: query
+          outboundBytes: 1
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          user: user
+          remoteAddr: remoteAddr
+          isCDN: true
+        itemCount: 6
+      properties:
+        pageCount:
+          format: int64
+          type: integer
+        itemCount:
+          format: int64
+          type: integer
+        items:
+          items:
+            $ref: '#/components/schemas/HLSSession'
+          type: array
+      type: object
+    Recording:
+      example:
+        name: name
+        segments:
+        - start: start
+        - start: start
+      properties:
+        name:
+          type: string
+        segments:
+          items:
+            $ref: '#/components/schemas/RecordingSegment'
+          type: array
+      type: object
+    RecordingList:
+      example:
+        pageCount: 0
+        items:
+        - name: name
+          segments:
+          - start: start
+          - start: start
+        - name: name
+          segments:
+          - start: start
+          - start: start
+        itemCount: 6
+      properties:
+        pageCount:
+          format: int64
+          type: integer
+        itemCount:
+          format: int64
+          type: integer
+        items:
+          items:
+            $ref: '#/components/schemas/Recording'
+          type: array
+      type: object
+    RecordingSegment:
+      example:
+        start: start
+      properties:
+        start:
+          type: string
+      type: object
+    RTMPConn:
+      example:
+        path: path
+        bytesReceived: 2
+        inboundBytes: 1
+        created: created
+        query: query
+        outboundBytes: 5
+        outboundFramesDiscarded: 5
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        state: idle
+        bytesSent: 7
+        user: user
+        remoteAddr: remoteAddr
+      properties:
+        id:
+          format: uuid
+          type: string
+        created:
+          type: string
+        remoteAddr:
+          type: string
+        state:
+          $ref: '#/components/schemas/RTMPConnState'
+        path:
+          type: string
+        query:
+          type: string
+        user:
+          type: string
+        inboundBytes:
+          format: uint64
+          type: integer
+        outboundBytes:
+          format: uint64
+          type: integer
+        outboundFramesDiscarded:
+          format: uint64
+          type: integer
+        bytesReceived:
+          deprecated: true
+          format: uint64
+          type: integer
+        bytesSent:
+          deprecated: true
+          format: uint64
+          type: integer
+      type: object
+    RTMPConnList:
+      example:
+        pageCount: 0
+        items:
+        - path: path
+          bytesReceived: 2
+          inboundBytes: 1
+          created: created
+          query: query
+          outboundBytes: 5
+          outboundFramesDiscarded: 5
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          state: idle
+          bytesSent: 7
+          user: user
+          remoteAddr: remoteAddr
+        - path: path
+          bytesReceived: 2
+          inboundBytes: 1
+          created: created
+          query: query
+          outboundBytes: 5
+          outboundFramesDiscarded: 5
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          state: idle
+          bytesSent: 7
+          user: user
+          remoteAddr: remoteAddr
+        itemCount: 6
+      properties:
+        pageCount:
+          format: int64
+          type: integer
+        itemCount:
+          format: int64
+          type: integer
+        items:
+          items:
+            $ref: '#/components/schemas/RTMPConn'
+          type: array
+      type: object
+    RTSPConn:
+      example:
+        bytesReceived: 5
+        inboundBytes: 1
+        created: created
+        session: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        outboundBytes: 5
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        bytesSent: 2
+        tunnel: tunnel
+        remoteAddr: remoteAddr
+      properties:
+        id:
+          format: uuid
+          type: string
+        created:
+          type: string
+        remoteAddr:
+          type: string
+        session:
+          format: uuid
+          nullable: true
+          type: string
+        tunnel:
+          type: string
+        inboundBytes:
+          format: uint64
+          type: integer
+        outboundBytes:
+          format: uint64
+          type: integer
+        bytesReceived:
+          deprecated: true
+          format: uint64
+          type: integer
+        bytesSent:
+          deprecated: true
+          format: uint64
+          type: integer
+      type: object
+    RTSPConnList:
+      example:
+        pageCount: 0
+        items:
+        - bytesReceived: 5
+          inboundBytes: 1
+          created: created
+          session: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          outboundBytes: 5
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          bytesSent: 2
+          tunnel: tunnel
+          remoteAddr: remoteAddr
+        - bytesReceived: 5
+          inboundBytes: 1
+          created: created
+          session: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          outboundBytes: 5
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          bytesSent: 2
+          tunnel: tunnel
+          remoteAddr: remoteAddr
+        itemCount: 6
+      properties:
+        pageCount:
+          format: int64
+          type: integer
+        itemCount:
+          format: int64
+          type: integer
+        items:
+          items:
+            $ref: '#/components/schemas/RTSPConn'
+          type: array
+      type: object
+    RTSPSession:
+      example:
+        outboundRTCPPackets: 1
+        outboundRTPPackets: 4
+        rtcpPacketsSent: 6
+        inboundRTPPacketsLost: 5
+        path: path
+        outboundRTPPacketsReportedLost: 7
+        rtcpPacketsInError: 8
+        inboundRTPPacketsJitter: 7.061401241503109
+        rtcpPacketsReceived: 9
+        outboundBytes: 2
+        rtpPacketsLost: 4
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        state: idle
+        remoteAddr: remoteAddr
+        conns:
+        - 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        - 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        outboundRTPPacketsDiscarded: 1
+        created: created
+        query: query
+        profile: profile
+        inboundRTCPPacketsInError: 3
+        transport: transport
+        bytesSent: 6
+        rtpPacketsSent: 1
+        rtpPacketsJitter: 9.965781217890562
+        bytesReceived: 1
+        rtpPacketsReceived: 7
+        inboundBytes: 1
+        inboundRTPPackets: 5
+        inboundRTCPPackets: 9
+        inboundRTPPacketsInError: 2
+        rtpPacketsInError: 5
+        user: user
+      properties:
+        id:
+          format: uuid
+          type: string
+        created:
+          type: string
+        remoteAddr:
+          type: string
+        state:
+          $ref: '#/components/schemas/RTSPSessionState'
+        path:
+          type: string
+        query:
+          type: string
+        user:
+          type: string
+        transport:
+          nullable: true
+          type: string
+        profile:
+          nullable: true
+          type: string
+        conns:
+          items:
+            format: uuid
+            type: string
+          type: array
+        inboundBytes:
+          format: uint64
+          type: integer
+        inboundRTPPackets:
+          format: uint64
+          type: integer
+        inboundRTPPacketsLost:
+          format: uint64
+          type: integer
+        inboundRTPPacketsInError:
+          format: uint64
+          type: integer
+        inboundRTPPacketsJitter:
+          format: double
+          type: number
+        inboundRTCPPackets:
+          format: uint64
+          type: integer
+        inboundRTCPPacketsInError:
+          format: uint64
+          type: integer
+        outboundBytes:
+          format: uint64
+          type: integer
+        outboundRTPPackets:
+          format: uint64
+          type: integer
+        outboundRTPPacketsReportedLost:
+          format: uint64
+          type: integer
+        outboundRTPPacketsDiscarded:
+          format: uint64
+          type: integer
+        outboundRTCPPackets:
+          format: uint64
+          type: integer
+        bytesReceived:
+          deprecated: true
+          format: uint64
+          type: integer
+        bytesSent:
+          deprecated: true
+          format: uint64
+          type: integer
+        rtpPacketsReceived:
+          deprecated: true
+          format: uint64
+          type: integer
+        rtpPacketsSent:
+          deprecated: true
+          format: uint64
+          type: integer
+        rtpPacketsLost:
+          deprecated: true
+          format: uint64
+          type: integer
+        rtpPacketsInError:
+          deprecated: true
+          format: uint64
+          type: integer
+        rtpPacketsJitter:
+          deprecated: true
+          format: double
+          type: number
+        rtcpPacketsReceived:
+          deprecated: true
+          format: uint64
+          type: integer
+        rtcpPacketsSent:
+          deprecated: true
+          format: uint64
+          type: integer
+        rtcpPacketsInError:
+          deprecated: true
+          format: uint64
+          type: integer
+      type: object
+    RTSPSessionList:
+      example:
+        pageCount: 0
+        items:
+        - outboundRTCPPackets: 1
+          outboundRTPPackets: 4
+          rtcpPacketsSent: 6
+          inboundRTPPacketsLost: 5
+          path: path
+          outboundRTPPacketsReportedLost: 7
+          rtcpPacketsInError: 8
+          inboundRTPPacketsJitter: 7.061401241503109
+          rtcpPacketsReceived: 9
+          outboundBytes: 2
+          rtpPacketsLost: 4
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          state: idle
+          remoteAddr: remoteAddr
+          conns:
+          - 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          - 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          outboundRTPPacketsDiscarded: 1
+          created: created
+          query: query
+          profile: profile
+          inboundRTCPPacketsInError: 3
+          transport: transport
+          bytesSent: 6
+          rtpPacketsSent: 1
+          rtpPacketsJitter: 9.965781217890562
+          bytesReceived: 1
+          rtpPacketsReceived: 7
+          inboundBytes: 1
+          inboundRTPPackets: 5
+          inboundRTCPPackets: 9
+          inboundRTPPacketsInError: 2
+          rtpPacketsInError: 5
+          user: user
+        - outboundRTCPPackets: 1
+          outboundRTPPackets: 4
+          rtcpPacketsSent: 6
+          inboundRTPPacketsLost: 5
+          path: path
+          outboundRTPPacketsReportedLost: 7
+          rtcpPacketsInError: 8
+          inboundRTPPacketsJitter: 7.061401241503109
+          rtcpPacketsReceived: 9
+          outboundBytes: 2
+          rtpPacketsLost: 4
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          state: idle
+          remoteAddr: remoteAddr
+          conns:
+          - 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          - 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          outboundRTPPacketsDiscarded: 1
+          created: created
+          query: query
+          profile: profile
+          inboundRTCPPacketsInError: 3
+          transport: transport
+          bytesSent: 6
+          rtpPacketsSent: 1
+          rtpPacketsJitter: 9.965781217890562
+          bytesReceived: 1
+          rtpPacketsReceived: 7
+          inboundBytes: 1
+          inboundRTPPackets: 5
+          inboundRTCPPackets: 9
+          inboundRTPPacketsInError: 2
+          rtpPacketsInError: 5
+          user: user
+        itemCount: 6
+      properties:
+        pageCount:
+          format: int64
+          type: integer
+        itemCount:
+          format: int64
+          type: integer
+        items:
+          items:
+            $ref: '#/components/schemas/RTSPSession'
+          type: array
+      type: object
+    SRTConn:
+      example:
+        bytesAvailSendBuf: 6
+        packetsReceiveBuf: 5
+        packetsReceivedAvgBelatedTime: 4
+        packetsReceivedNAK: 1
+        bytesSendDrop: 2
+        path: path
+        bytesReceivedBelated: 8
+        bytesReceivedUndecrypt: 6
+        packetsReceivedKM: 7
+        packetsFlowWindow: 6
+        bytesReceiveBuf: 3
+        mbpsReceiveRate: 0.8851374739011653
+        packetsSent: 1
+        msSendTsbPdDelay: 7
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        state: idle
+        packetsReceivedDrop: 5
+        packetsRetrans: 2
+        usSndDuration: 1
+        bytesSendBuf: 3
+        msReceiveTsbPdDelay: 0
+        created: created
+        query: query
+        packetsSentNAK: 1
+        bytesAvailReceiveBuf: 0
+        packetsReorderTolerance: 6
+        bytesReceivedRetrans: 1
+        packetsSendLoss: 9
+        usPacketsSendPeriod: 5.944895607614016
+        packetsReceivedUndecrypt: 9
+        packetsReceived: 5
+        packetsSendBuf: 7
+        packetsSentACK: 7
+        outboundFramesDiscarded: 7
+        packetsSendLossRate: 1.041444916118296
+        msSendBuf: 3
+        packetsReceivedLossRate: 4.678947989005849
+        packetsSendDrop: 4
+        packetsReceivedBelated: 5
+        mbpsSendRate: 7.143538047012306
+        bytesReceivedDrop: 6
+        packetsReceivedLoss: 3
+        byteMSS: 8
+        mbpsLinkCapacity: 7.058770351582356
+        bytesRetrans: 6
+        msRTT: 3.0937452626664474
+        packetsSentKM: 6
+        remoteAddr: remoteAddr
+        packetsFlightSize: 3
+        packetsReceivedRetrans: 4
+        bytesSentUnique: 9
+        packetsSentUnique: 2
+        bytesSent: 9
+        bytesReceivedLoss: 3
+        bytesReceived: 6
+        packetsReceivedUnique: 7
+        bytesReceivedUnique: 6
+        packetsReceivedACK: 1
+        mbpsMaxBW: 4.652396432933246
+        msReceiveBuf: 4
+        user: user
+      properties:
+        id:
+          format: uuid
+          type: string
+        created:
+          type: string
+        remoteAddr:
+          type: string
+        state:
+          $ref: '#/components/schemas/SRTConnState'
+        path:
+          type: string
+        query:
+          type: string
+        user:
+          type: string
+        packetsSent:
+          description: "The total number of sent DATA packets, including retransmitted\
+            \ packets"
+          format: uint64
+          type: integer
+        packetsReceived:
+          description: "The total number of received DATA packets, including retransmitted\
+            \ packets"
+          format: uint64
+          type: integer
+        packetsReceivedBelated:
+          format: uint64
+          type: integer
+        packetsSentUnique:
+          description: The total number of unique DATA packets sent by the SRT sender
+          format: uint64
+          type: integer
+        packetsReceivedUnique:
+          description: "The total number of unique original, retransmitted or recovered\
+            \ by the packet filter DATA packets received in time, decrypted without\
+            \ errors and, as a result, scheduled for delivery to the upstream application\
+            \ by the SRT receiver."
+          format: uint64
+          type: integer
+        packetsSendLoss:
+          description: The total number of data packets considered or reported as
+            lost at the sender side. Does not correspond to the packets detected as
+            lost at the receiver side.
+          format: uint64
+          type: integer
+        packetsReceivedLoss:
+          description: The total number of SRT DATA packets detected as presently
+            missing (either reordered or lost) at the receiver side
+          format: uint64
+          type: integer
+        packetsRetrans:
+          description: The total number of retransmitted packets sent by the SRT sender
+          format: uint64
+          type: integer
+        packetsReceivedRetrans:
+          description: The total number of retransmitted packets registered at the
+            receiver side
+          format: uint64
+          type: integer
+        packetsSentACK:
+          description: The total number of sent ACK (Acknowledgement) control packets
+          format: uint64
+          type: integer
+        packetsReceivedACK:
+          description: The total number of received ACK (Acknowledgement) control
+            packets
+          format: uint64
+          type: integer
+        packetsSentNAK:
+          description: The total number of sent NAK (Negative Acknowledgement) control
+            packets
+          format: uint64
+          type: integer
+        packetsReceivedNAK:
+          description: The total number of received NAK (Negative Acknowledgement)
+            control packets
+          format: uint64
+          type: integer
+        packetsSentKM:
+          description: The total number of sent KM (Key Material) control packets
+          format: uint64
+          type: integer
+        packetsReceivedKM:
+          description: The total number of received KM (Key Material) control packets
+          format: uint64
+          type: integer
+        usSndDuration:
+          description: "The total accumulated time in microseconds, during which the\
+            \ SRT sender has some data to transmit, including packets that have been\
+            \ sent, but not yet acknowledged"
+          format: uint64
+          type: integer
+        packetsSendDrop:
+          description: The total number of dropped by the SRT sender DATA packets
+            that have no chance to be delivered in time
+          format: uint64
+          type: integer
+        packetsReceivedDrop:
+          description: "The total number of dropped by the SRT receiver and, as a\
+            \ result, not delivered to the upstream application DATA packets"
+          format: uint64
+          type: integer
+        packetsReceivedUndecrypt:
+          description: The total number of packets that failed to be decrypted at
+            the receiver side
+          format: uint64
+          type: integer
+        bytesSent:
+          description: "Same as packetsSent, but expressed in bytes, including payload\
+            \ and all the headers (IP, TCP, SRT)"
+          format: uint64
+          type: integer
+        bytesReceived:
+          description: "Same as packetsReceived, but expressed in bytes, including\
+            \ payload and all the headers (IP, TCP, SRT)"
+          format: uint64
+          type: integer
+        bytesReceivedBelated:
+          format: uint64
+          type: integer
+        bytesSentUnique:
+          description: "Same as packetsSentUnique, but expressed in bytes, including\
+            \ payload and all the headers (IP, TCP, SRT)"
+          format: uint64
+          type: integer
+        bytesReceivedUnique:
+          description: "Same as packetsReceivedUnique, but expressed in bytes, including\
+            \ payload and all the headers (IP, TCP, SRT)"
+          format: uint64
+          type: integer
+        bytesReceivedLoss:
+          description: "Same as packetsReceivedLoss, but expressed in bytes, including\
+            \ payload and all the headers (IP, TCP, SRT), bytes for the presently\
+            \ missing (either reordered or lost) packets' payloads are estimated based\
+            \ on the average packet size"
+          format: uint64
+          type: integer
+        bytesRetrans:
+          description: "Same as packetsRetrans, but expressed in bytes, including\
+            \ payload and all the headers (IP, TCP, SRT)"
+          format: uint64
+          type: integer
+        bytesReceivedRetrans:
+          description: "Same as packetsReceivedRetrans, but expressed in bytes, including\
+            \ payload and all the headers (IP, TCP, SRT)"
+          format: uint64
+          type: integer
+        bytesSendDrop:
+          description: "Same as packetsSendDrop, but expressed in bytes, including\
+            \ payload and all the headers (IP, TCP, SRT)"
+          format: uint64
+          type: integer
+        bytesReceivedDrop:
+          description: "Same as packetsReceivedDrop, but expressed in bytes, including\
+            \ payload and all the headers (IP, TCP, SRT)"
+          format: uint64
+          type: integer
+        bytesReceivedUndecrypt:
+          description: "Same as packetsReceivedUndecrypt, but expressed in bytes,\
+            \ including payload and all the headers (IP, TCP, SRT)"
+          format: uint64
+          type: integer
+        usPacketsSendPeriod:
+          description: "Current minimum time interval between which consecutive packets\
+            \ are sent, in microseconds"
+          format: double
+          type: number
+        packetsFlowWindow:
+          description: The maximum number of packets that can be "in flight"
+          format: uint64
+          type: integer
+        packetsFlightSize:
+          description: The number of packets in flight
+          format: uint64
+          type: integer
+        msRTT:
+          description: "Smoothed round-trip time (SRTT), an exponentially-weighted\
+            \ moving average (EWMA) of an endpoint's RTT samples, in milliseconds"
+          format: double
+          type: number
+        mbpsSendRate:
+          description: "Current transmission bandwidth, in Mbps"
+          format: double
+          type: number
+        mbpsReceiveRate:
+          description: "Current receiving bandwidth, in Mbps"
+          format: double
+          type: number
+        mbpsLinkCapacity:
+          description: "Estimated capacity of the network link, in Mbps"
+          format: double
+          type: number
+        bytesAvailSendBuf:
+          description: "The available space in the sender's buffer, in bytes"
+          format: uint64
+          type: integer
+        bytesAvailReceiveBuf:
+          description: "The available space in the receiver's buffer, in bytes"
+          format: uint64
+          type: integer
+        mbpsMaxBW:
+          description: "Transmission bandwidth limit, in Mbps"
+          format: double
+          type: number
+        byteMSS:
+          description: "Maximum Segment Size (MSS), in bytes"
+          format: uint64
+          type: integer
+        packetsSendBuf:
+          description: "The number of packets in the sender's buffer that are already\
+            \ scheduled for sending or even possibly sent, but not yet acknowledged"
+          format: uint64
+          type: integer
+        bytesSendBuf:
+          description: "Instantaneous (current) value of packetsSndBuf, but expressed\
+            \ in bytes, including payload and all headers (IP, TCP, SRT)"
+          format: uint64
+          type: integer
+        msSendBuf:
+          description: The timespan (msec) of packets in the sender's buffer (unacknowledged
+            packets)
+          format: uint64
+          type: integer
+        msSendTsbPdDelay:
+          description: Timestamp-based Packet Delivery Delay value of the peer
+          format: uint64
+          type: integer
+        packetsReceiveBuf:
+          description: The number of acknowledged packets in receiver's buffer
+          format: uint64
+          type: integer
+        bytesReceiveBuf:
+          description: "Instantaneous (current) value of packetsRcvBuf, expressed\
+            \ in bytes, including payload and all headers (IP, TCP, SRT)"
+          format: uint64
+          type: integer
+        msReceiveBuf:
+          description: The timespan (msec) of acknowledged packets in the receiver's
+            buffer
+          format: uint64
+          type: integer
+        msReceiveTsbPdDelay:
+          description: Timestamp-based Packet Delivery Delay value set on the socket
+            via SRTO_RCVLATENCY or SRTO_LATENCY
+          format: uint64
+          type: integer
+        packetsReorderTolerance:
+          description: Instant value of the packet reorder tolerance
+          format: uint64
+          type: integer
+        packetsReceivedAvgBelatedTime:
+          description: Accumulated difference between the current time and the time-to-play
+            of a packet that is received late
+          format: uint64
+          type: integer
+        packetsSendLossRate:
+          description: Percentage of resent data vs. sent data
+          format: double
+          type: number
+        packetsReceivedLossRate:
+          description: Percentage of retransmitted data vs. received data
+          format: double
+          type: number
+        outboundFramesDiscarded:
+          format: uint64
+          type: integer
+      type: object
+    SRTConnList:
+      example:
+        pageCount: 0
+        items:
+        - bytesAvailSendBuf: 6
+          packetsReceiveBuf: 5
+          packetsReceivedAvgBelatedTime: 4
+          packetsReceivedNAK: 1
+          bytesSendDrop: 2
+          path: path
+          bytesReceivedBelated: 8
+          bytesReceivedUndecrypt: 6
+          packetsReceivedKM: 7
+          packetsFlowWindow: 6
+          bytesReceiveBuf: 3
+          mbpsReceiveRate: 0.8851374739011653
+          packetsSent: 1
+          msSendTsbPdDelay: 7
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          state: idle
+          packetsReceivedDrop: 5
+          packetsRetrans: 2
+          usSndDuration: 1
+          bytesSendBuf: 3
+          msReceiveTsbPdDelay: 0
+          created: created
+          query: query
+          packetsSentNAK: 1
+          bytesAvailReceiveBuf: 0
+          packetsReorderTolerance: 6
+          bytesReceivedRetrans: 1
+          packetsSendLoss: 9
+          usPacketsSendPeriod: 5.944895607614016
+          packetsReceivedUndecrypt: 9
+          packetsReceived: 5
+          packetsSendBuf: 7
+          packetsSentACK: 7
+          outboundFramesDiscarded: 7
+          packetsSendLossRate: 1.041444916118296
+          msSendBuf: 3
+          packetsReceivedLossRate: 4.678947989005849
+          packetsSendDrop: 4
+          packetsReceivedBelated: 5
+          mbpsSendRate: 7.143538047012306
+          bytesReceivedDrop: 6
+          packetsReceivedLoss: 3
+          byteMSS: 8
+          mbpsLinkCapacity: 7.058770351582356
+          bytesRetrans: 6
+          msRTT: 3.0937452626664474
+          packetsSentKM: 6
+          remoteAddr: remoteAddr
+          packetsFlightSize: 3
+          packetsReceivedRetrans: 4
+          bytesSentUnique: 9
+          packetsSentUnique: 2
+          bytesSent: 9
+          bytesReceivedLoss: 3
+          bytesReceived: 6
+          packetsReceivedUnique: 7
+          bytesReceivedUnique: 6
+          packetsReceivedACK: 1
+          mbpsMaxBW: 4.652396432933246
+          msReceiveBuf: 4
+          user: user
+        - bytesAvailSendBuf: 6
+          packetsReceiveBuf: 5
+          packetsReceivedAvgBelatedTime: 4
+          packetsReceivedNAK: 1
+          bytesSendDrop: 2
+          path: path
+          bytesReceivedBelated: 8
+          bytesReceivedUndecrypt: 6
+          packetsReceivedKM: 7
+          packetsFlowWindow: 6
+          bytesReceiveBuf: 3
+          mbpsReceiveRate: 0.8851374739011653
+          packetsSent: 1
+          msSendTsbPdDelay: 7
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          state: idle
+          packetsReceivedDrop: 5
+          packetsRetrans: 2
+          usSndDuration: 1
+          bytesSendBuf: 3
+          msReceiveTsbPdDelay: 0
+          created: created
+          query: query
+          packetsSentNAK: 1
+          bytesAvailReceiveBuf: 0
+          packetsReorderTolerance: 6
+          bytesReceivedRetrans: 1
+          packetsSendLoss: 9
+          usPacketsSendPeriod: 5.944895607614016
+          packetsReceivedUndecrypt: 9
+          packetsReceived: 5
+          packetsSendBuf: 7
+          packetsSentACK: 7
+          outboundFramesDiscarded: 7
+          packetsSendLossRate: 1.041444916118296
+          msSendBuf: 3
+          packetsReceivedLossRate: 4.678947989005849
+          packetsSendDrop: 4
+          packetsReceivedBelated: 5
+          mbpsSendRate: 7.143538047012306
+          bytesReceivedDrop: 6
+          packetsReceivedLoss: 3
+          byteMSS: 8
+          mbpsLinkCapacity: 7.058770351582356
+          bytesRetrans: 6
+          msRTT: 3.0937452626664474
+          packetsSentKM: 6
+          remoteAddr: remoteAddr
+          packetsFlightSize: 3
+          packetsReceivedRetrans: 4
+          bytesSentUnique: 9
+          packetsSentUnique: 2
+          bytesSent: 9
+          bytesReceivedLoss: 3
+          bytesReceived: 6
+          packetsReceivedUnique: 7
+          bytesReceivedUnique: 6
+          packetsReceivedACK: 1
+          mbpsMaxBW: 4.652396432933246
+          msReceiveBuf: 4
+          user: user
+        itemCount: 6
+      properties:
+        pageCount:
+          format: int64
+          type: integer
+        itemCount:
+          format: int64
+          type: integer
+        items:
+          items:
+            $ref: '#/components/schemas/SRTConn'
+          type: array
+      type: object
+    AlwaysAvailableTrack:
+      example:
+        codec: AV1
+        channelCount: 1
+        muLaw: true
+        sampleRate: 6
+      properties:
+        codec:
+          $ref: '#/components/schemas/AlwaysAvailableTrackCodec'
+        sampleRate:
+          format: int64
+          type: integer
+        channelCount:
+          format: int64
+          type: integer
+        muLaw:
+          type: boolean
+      type: object
+    WebRTCICEServer:
+      example:
+        password: password
+        clientOnly: true
+        url: url
+        username: username
+      properties:
+        url:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+        clientOnly:
+          type: boolean
+      type: object
+    WebRTCSession:
+      example:
+        outboundRTCPPackets: 2
+        outboundRTPPackets: 3
+        rtcpPacketsSent: 4
+        inboundRTPPacketsLost: 5
+        path: path
+        inboundRTPPacketsJitter: 2.3021358869347655
+        rtcpPacketsReceived: 1
+        peerConnectionEstablished: true
+        outboundBytes: 9
+        rtpPacketsLost: 6
+        id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+        state: read
+        remoteAddr: remoteAddr
+        localCandidate: localCandidate
+        created: created
+        query: query
+        bytesSent: 1
+        rtpPacketsSent: 1
+        rtpPacketsJitter: 7.457744773683766
+        bytesReceived: 7
+        rtpPacketsReceived: 1
+        inboundBytes: 1
+        inboundRTPPackets: 5
+        remoteCandidate: remoteCandidate
+        inboundRTCPPackets: 7
+        outboundFramesDiscarded: 4
+        user: user
+      properties:
+        id:
+          format: uuid
+          type: string
+        created:
+          type: string
+        remoteAddr:
+          type: string
+        peerConnectionEstablished:
+          type: boolean
+        localCandidate:
+          type: string
+        remoteCandidate:
+          type: string
+        state:
+          $ref: '#/components/schemas/WebRTCSessionState'
+        path:
+          type: string
+        query:
+          type: string
+        user:
+          type: string
+        inboundBytes:
+          format: uint64
+          type: integer
+        inboundRTPPackets:
+          format: uint64
+          type: integer
+        inboundRTPPacketsLost:
+          format: uint64
+          type: integer
+        inboundRTPPacketsJitter:
+          format: double
+          type: number
+        inboundRTCPPackets:
+          format: uint64
+          type: integer
+        outboundBytes:
+          format: uint64
+          type: integer
+        outboundRTPPackets:
+          format: uint64
+          type: integer
+        outboundRTCPPackets:
+          format: uint64
+          type: integer
+        outboundFramesDiscarded:
+          format: uint64
+          type: integer
+        bytesReceived:
+          deprecated: true
+          format: uint64
+          type: integer
+        bytesSent:
+          deprecated: true
+          format: uint64
+          type: integer
+        rtpPacketsReceived:
+          deprecated: true
+          format: uint64
+          type: integer
+        rtpPacketsSent:
+          deprecated: true
+          format: uint64
+          type: integer
+        rtpPacketsLost:
+          deprecated: true
+          format: uint64
+          type: integer
+        rtpPacketsJitter:
+          deprecated: true
+          format: double
+          type: number
+        rtcpPacketsReceived:
+          deprecated: true
+          format: uint64
+          type: integer
+        rtcpPacketsSent:
+          deprecated: true
+          format: uint64
+          type: integer
+      type: object
+    WebRTCSessionList:
+      example:
+        pageCount: 0
+        items:
+        - outboundRTCPPackets: 2
+          outboundRTPPackets: 3
+          rtcpPacketsSent: 4
+          inboundRTPPacketsLost: 5
+          path: path
+          inboundRTPPacketsJitter: 2.3021358869347655
+          rtcpPacketsReceived: 1
+          peerConnectionEstablished: true
+          outboundBytes: 9
+          rtpPacketsLost: 6
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          state: read
+          remoteAddr: remoteAddr
+          localCandidate: localCandidate
+          created: created
+          query: query
+          bytesSent: 1
+          rtpPacketsSent: 1
+          rtpPacketsJitter: 7.457744773683766
+          bytesReceived: 7
+          rtpPacketsReceived: 1
+          inboundBytes: 1
+          inboundRTPPackets: 5
+          remoteCandidate: remoteCandidate
+          inboundRTCPPackets: 7
+          outboundFramesDiscarded: 4
+          user: user
+        - outboundRTCPPackets: 2
+          outboundRTPPackets: 3
+          rtcpPacketsSent: 4
+          inboundRTPPacketsLost: 5
+          path: path
+          inboundRTPPacketsJitter: 2.3021358869347655
+          rtcpPacketsReceived: 1
+          peerConnectionEstablished: true
+          outboundBytes: 9
+          rtpPacketsLost: 6
+          id: 046b6c7f-0b8a-43b9-b35d-6489e6daee91
+          state: read
+          remoteAddr: remoteAddr
+          localCandidate: localCandidate
+          created: created
+          query: query
+          bytesSent: 1
+          rtpPacketsSent: 1
+          rtpPacketsJitter: 7.457744773683766
+          bytesReceived: 7
+          rtpPacketsReceived: 1
+          inboundBytes: 1
+          inboundRTPPackets: 5
+          remoteCandidate: remoteCandidate
+          inboundRTCPPackets: 7
+          outboundFramesDiscarded: 4
+          user: user
+        itemCount: 6
+      properties:
+        pageCount:
+          format: int64
+          type: integer
+        itemCount:
+          format: int64
+          type: integer
+        items:
+          items:
+            $ref: '#/components/schemas/WebRTCSession'
+          type: array
+      type: object
+
