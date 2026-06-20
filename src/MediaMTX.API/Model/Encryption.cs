@@ -56,7 +56,7 @@ namespace MediaMTX.API.Model
         /// <returns></returns>
         public static Encryption FromString(string value)
         {
-            if (value.Equals("false"))
+            if (value.Equals("false") || value.Equals("no"))
                 return Encryption.False;
 
             if (value.Equals("optional"))
@@ -75,7 +75,7 @@ namespace MediaMTX.API.Model
         /// <returns></returns>
         public static Encryption? FromStringOrDefault(string value)
         {
-            if (value.Equals("false"))
+            if (value.Equals("false") || value.Equals("no"))
                 return Encryption.False;
 
             if (value.Equals("optional"))

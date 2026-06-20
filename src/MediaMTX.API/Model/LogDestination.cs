@@ -31,16 +31,19 @@ namespace MediaMTX.API.Model
         /// <summary>
         /// Enum Stdout for value: stdout
         /// </summary>
+        [JsonStringEnumMemberName("stdout")]
         Stdout = 1,
 
         /// <summary>
         /// Enum File for value: file
         /// </summary>
+        [JsonStringEnumMemberName("file")]
         File = 2,
 
         /// <summary>
         /// Enum Syslog for value: syslog
         /// </summary>
+        [JsonStringEnumMemberName("syslog")]
         Syslog = 3
     }
 

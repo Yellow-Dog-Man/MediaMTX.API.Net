@@ -374,16 +374,19 @@ namespace MediaMTX.API.Model
             /// <summary>
             /// Enum Udp for value: udp
             /// </summary>
+            [JsonStringEnumMemberName("udp")]
             Udp = 1,
 
             /// <summary>
             /// Enum Multicast for value: multicast
             /// </summary>
+            [JsonStringEnumMemberName("multicast")]
             Multicast = 2,
 
             /// <summary>
             /// Enum Tcp for value: tcp
             /// </summary>
+            [JsonStringEnumMemberName("tcp")]
             Tcp = 3
         }
 
@@ -494,16 +497,19 @@ namespace MediaMTX.API.Model
             /// <summary>
             /// Enum Udp for value: udp
             /// </summary>
+            [JsonStringEnumMemberNameAttribute("udp")]
             Udp = 1,
 
             /// <summary>
             /// Enum Multicast for value: multicast
             /// </summary>
+            [JsonStringEnumMemberNameAttribute("multicast")]
             Multicast = 2,
 
             /// <summary>
             /// Enum Tcp for value: tcp
             /// </summary>
+            [JsonStringEnumMemberNameAttribute("tcp")]
             Tcp = 3
         }
 

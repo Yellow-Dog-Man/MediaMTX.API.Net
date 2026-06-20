@@ -31,11 +31,13 @@ namespace MediaMTX.API.Model
         /// <summary>
         /// Enum Basic for value: basic
         /// </summary>
+        [JsonStringEnumMemberName("basic")]
         Basic = 1,
 
         /// <summary>
         /// Enum Digest for value: digest
         /// </summary>
+        [JsonStringEnumMemberName("digest")]
         Digest = 2
     }
 
